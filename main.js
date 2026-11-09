@@ -63,15 +63,22 @@ document.addEventListener("keydown", (event) => {
 
 const menu = document.querySelector("#menu");
 const links = document.querySelector("#nav-links");
-menu.addEventListener("click", () => {
-  const open = links.classList.toggle("open");
+const menuLabel = menu.querySelector(".menu-label");
+function setMenu(open) {
+  links.classList.toggle("open", open);
   menu.setAttribute("aria-expanded", String(open));
-});
+  menu.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  if (menuLabel) menuLabel.textContent = open ? "Close" : "Menu";
+}
+menu.addEventListener("click", () => setMenu(!links.classList.contains("open")));
 links.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => {
-    links.classList.remove("open");
-    menu.setAttribute("aria-expanded", "false");
-  });
+  link.addEventListener("click", () => setMenu(false));
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") setMenu(false);
+});
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 1180) setMenu(false);
 });
 
 const progress = document.querySelector(".progress");
